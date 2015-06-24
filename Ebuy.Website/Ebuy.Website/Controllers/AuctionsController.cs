@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Ebuy.Website.Models;
 
 namespace Ebuy.Website.Controllers
 {
@@ -35,7 +36,7 @@ namespace Ebuy.Website.Controllers
 
         //
         // GET: /Auctions/Create
-
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -45,18 +46,12 @@ namespace Ebuy.Website.Controllers
         // POST: /Auctions/Create
 
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Auction auction)
         {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            var db = new EbuyDataContext();
+            db.Auctions.Add(auction);
+            db.SaveChanges();
+            return View(auction);
         }
 
         //

@@ -5,6 +5,13 @@ using System.Web;
 
 namespace Ebuy.Website.Models
 {
+    using System.Data.Entity;
+
+    public class EbuyDataContext : DbContext
+    {
+        public DbSet<Auction> Auctions { get; set; }
+    }
+
     public class Auction
     {
         public long Id { get; set; }
