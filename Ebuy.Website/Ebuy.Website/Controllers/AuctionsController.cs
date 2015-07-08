@@ -22,15 +22,12 @@ namespace Ebuy.Website.Controllers
 
         public ActionResult Details(long id = 0)
         {
-            var auction = new Ebuy.Website.Models.Auction {
-                Id = id,
-                Title = "Brand new Widget 2.0",
-                Description = "This is a brand new version 2.0 Widget!",
-                StartPrice = 1.00m,
-                CurrentPrice = 13.40m,
-                StartTime = DateTime.Parse("6-15-2012 12:34 PM"),
-                EndTime = DateTime.Parse("6-23-2012 12:34 PM"),
-            };
+            var db = new EbuyDataContext();
+            var auction = db.Auctions.FirstOrDefault(x => x.Id == id);
+            if (auction == null)
+            {
+                return HttpNotFound();
+            }
             return View(auction);
         }
 
@@ -48,9 +45,21 @@ namespace Ebuy.Website.Controllers
         [HttpPost]
         public ActionResult Create(Auction auction)
         {
-            var db = new EbuyDataContext();
-            db.Auctions.Add(auction);
-            db.SaveChanges();
+            if (auction.EndTime <= DateTime.Now.AddDays(1))
+            {
+                ModelState.AddModelError(
+                "EndTime",
+                "Auction must be at least one day long"
+                );
+            }
+            if (ModelState.IsValid)
+            {
+                var db = new EbuyDataContext();
+                db.Auctions.Add(auction);
+                db.SaveChanges();
+                return RedirectToAction("Details", new { id = auction.Id });
+            }
+
             return View(auction);
         }
 
